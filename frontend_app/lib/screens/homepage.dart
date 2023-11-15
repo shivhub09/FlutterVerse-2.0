@@ -16,11 +16,14 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
+
+      // to arrange the widgets in a vertical fashion
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 45, 20, 0),
+            // Row widget to make all the widgets inside of it to be arranged in the horizontal fashion
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,6 +51,8 @@ class _HomepageState extends State<Homepage> {
               ],
             ),
           ),
+
+          // The Search Box
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Container(
@@ -79,6 +84,8 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
           ),
+
+          // The list of recipes
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(top: 20),
@@ -97,10 +104,11 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ],
               ),
-
               child: Column(
+                // arranging the text and the list of recipes in the column
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // the text
                   Text(
                     "Favorites : ",
                     style: GoogleFonts.sanchez(
@@ -109,11 +117,14 @@ class _HomepageState extends State<Homepage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+
+                  // the expanded widget to arrange everything in the column
                   Expanded(
                     child: ListView.builder(
                         padding: const EdgeInsets.all(0),
                         itemCount: 5,
                         itemBuilder: ((context, index) {
+                          // this will return that many number of recipecard widgets equal to the itemcount
                           return const RecipeCard(
                             imageUrl:
                                 "https://lh3.googleusercontent.com/x5MLeEHoOrjJdgAU2QBVL9wZpzXAfVAAMphZkTg9Pu5sLFftWEOAWWtlrcXgK_r3lkBg_WO8O5pZEcFUTc6aruXWbdrK-i72zQ",
@@ -122,27 +133,9 @@ class _HomepageState extends State<Homepage> {
                           );
                         })),
                   ),
+                  // the expanded widgets ends here
                 ],
               ),
-              // child: SingleChildScrollView(
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       Text(
-              //         "Keto",
-              //         style: GoogleFonts.sanchez(
-              //             fontSize: 24, fontWeight: FontWeight.bold),
-              //       ),
-
-              //       const RecipeCard(
-              //         imageUrl:
-              //             "https://lh3.googleusercontent.com/x5MLeEHoOrjJdgAU2QBVL9wZpzXAfVAAMphZkTg9Pu5sLFftWEOAWWtlrcXgK_r3lkBg_WO8O5pZEcFUTc6aruXWbdrK-i72zQ",
-              //         title: "Seared Scallops Scampi with Spinach",
-              //         totalTime: "35 min",
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ),
           ),
         ],
