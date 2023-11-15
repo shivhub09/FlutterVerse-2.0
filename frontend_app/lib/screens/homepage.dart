@@ -44,6 +44,37 @@ class _HomepageState extends State<Homepage> {
 
 
           // search box
+          Positioned(
+            top: 100,
+            left: 20,
+            right: 20,
+            child: Container(
+              decoration: BoxDecoration(
+                  color: Colors.transparent,
+                  borderRadius: BorderRadius.circular(30.0),
+                  border: Border.all(color: Colors.red)),
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                child: TextFormField(
+                  cursorColor: Colors.white,
+                  controller: _controller,
+                  style: GoogleFonts.montserrat(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    hintStyle: GoogleFonts.montserrat(
+                        color: Colors.white, fontSize: 18),
+                    border: InputBorder.none,
+                    suffixIcon: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                      size: 25,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
           
 
           // Recipe Cards
