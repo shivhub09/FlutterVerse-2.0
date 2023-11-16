@@ -16,11 +16,13 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   TextEditingController _controller = TextEditingController();
   late Future<List<Recipe>> _futureRecipes;
+  late String textTitle;
 
   @override
   void initState() {
     super.initState();
-    _futureRecipes = fetchRecipes();
+    textTitle = 'Mexican';
+    _futureRecipes = fetchRecipes(textTitle);
   }
 
   @override
@@ -61,8 +63,42 @@ class _HomepageState extends State<Homepage> {
           ),
 
           // searchbox widget created
-          SearchBox(
-            controller: _controller,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: Colors.red),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextFormField(
+                  onFieldSubmitted: (value) {
+                    setState(() {
+                      textTitle = value;
+                      _futureRecipes = fetchRecipes(value);
+                    });
+                  },
+                  cursorColor: Colors.black,
+                  controller: _controller,
+                  style: GoogleFonts.montserrat(color: Colors.black),
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    hintStyle: GoogleFonts.montserrat(
+                      color: Colors.black,
+                      fontSize: 18,
+                    ),
+                    border: InputBorder.none,
+                    suffixIcon: const Icon(
+                      Icons.search,
+                      color: Colors.black,
+                      size: 25,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ),
           // ends here
 
@@ -89,7 +125,7 @@ class _HomepageState extends State<Homepage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Favorites",
+                    textTitle,
                     style: GoogleFonts.sanchez(
                       fontSize: 25,
                       color: Colors.black,
@@ -150,7 +186,7 @@ class _HomepageState extends State<Homepage> {
   }
 
   // function starts here
-  Future<List<Recipe>> fetchRecipes() async {
+  Future<List<Recipe>> fetchRecipes(String query) async {
     var url = Uri.parse('https://tasty.p.rapidapi.com/recipes/list');
 
     var headers = {
@@ -160,8 +196,8 @@ class _HomepageState extends State<Homepage> {
 
     var params = {
       'from': '0',
-      'size': '5', // Fetch 5 recipes
-      'q': 'pasta ',
+      'size': '10', // Fetch 5 recipes
+      'q': query,
     };
 
     var response =
@@ -183,50 +219,4 @@ class _HomepageState extends State<Homepage> {
   }
 
   // function ends here
-}
-
-// the searchbox widget created
-class SearchBox extends StatefulWidget {
-  final TextEditingController controller;
-  const SearchBox({required this.controller});
-
-  @override
-  State<SearchBox> createState() => _SearchBoxState();
-}
-
-class _SearchBoxState extends State<SearchBox> {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.transparent,
-          borderRadius: BorderRadius.circular(30),
-          border: Border.all(color: Colors.red),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: TextFormField(
-            cursorColor: Colors.black,
-            controller: widget.controller,
-            style: GoogleFonts.montserrat(color: Colors.black),
-            decoration: InputDecoration(
-              hintText: 'Search...',
-              hintStyle: GoogleFonts.montserrat(
-                color: Colors.black,
-                fontSize: 18,
-              ),
-              border: InputBorder.none,
-              suffixIcon: const Icon(
-                Icons.search,
-                color: Colors.black,
-                size: 25,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
