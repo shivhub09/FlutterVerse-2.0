@@ -4,10 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 class RecipeCard extends StatelessWidget {
   final String imageUrl;
   final String title;
-  final String totalTime;
-
-  const RecipeCard(
-      {required this.imageUrl, required this.title, required this.totalTime});
+  const RecipeCard({
+    required this.imageUrl,
+    required this.title,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,28 +41,15 @@ class RecipeCard extends StatelessWidget {
             Container(
               padding: EdgeInsets.all(10),
               color: Colors.white,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      title,
-                      style: GoogleFonts.montserrat(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
+              child: Flexible(
+                child: Text(
+                  title,
+                  style: GoogleFonts.montserrat(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                  Text(
-                    totalTime,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],

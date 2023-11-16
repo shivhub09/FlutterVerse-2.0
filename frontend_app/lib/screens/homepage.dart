@@ -1,6 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_app/cards/Recipe_card.dart';
+import 'package:frontend_app/models/recipe_model.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:http/http.dart' as http;
 
 class Homepage extends StatefulWidget {
   const Homepage({Key? key}) : super(key: key);
@@ -11,19 +14,23 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   TextEditingController _controller = TextEditingController();
+  late Future<List<Recipe>> _futureRecipes;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureRecipes = fetchRecipes();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade100,
-
-      // to arrange the widgets in a vertical fashion
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 45, 20, 0),
-            // Row widget to make all the widgets inside of it to be arranged in the horizontal fashion
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -51,8 +58,6 @@ class _HomepageState extends State<Homepage> {
               ],
             ),
           ),
-
-          // The Search Box
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
             child: Container(
@@ -84,8 +89,6 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
           ),
-
-          // The list of recipes
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(top: 20),
@@ -105,35 +108,44 @@ class _HomepageState extends State<Homepage> {
                 ],
               ),
               child: Column(
-                // arranging the text and the list of recipes in the column
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // the text
                   Text(
-                    "Favorites : ",
+                    "Favorites",
                     style: GoogleFonts.sanchez(
                       fontSize: 25,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-
-                  // the expanded widget to arrange everything in the column
                   Expanded(
-                    child: ListView.builder(
-                        padding: const EdgeInsets.all(0),
-                        itemCount: 5,
-                        itemBuilder: ((context, index) {
-                          // this will return that many number of recipecard widgets equal to the itemcount
-                          return const RecipeCard(
-                            imageUrl:
-                                "https://lh3.googleusercontent.com/x5MLeEHoOrjJdgAU2QBVL9wZpzXAfVAAMphZkTg9Pu5sLFftWEOAWWtlrcXgK_r3lkBg_WO8O5pZEcFUTc6aruXWbdrK-i72zQ",
-                            title: "Seared Scallops Scampi with Spinach",
-                            totalTime: "35 min",
+                    child: FutureBuilder<List<Recipe>>(
+                      future: _futureRecipes,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(child: CircularProgressIndicator());
+                        } else if (snapshot.hasError) {
+                          return Center(
+                              child: Text('Error: ${snapshot.error}'));
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Center(child: Text('No recipes found'));
+                        } else {
+                          return ListView.builder(
+                            padding: const EdgeInsets.all(0),
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: ((context, index) {
+                              return RecipeCard(
+                                imageUrl: snapshot.data![index].imageUrl,
+                                title: snapshot.data![index].displayName,
+                              );
+                            }),
                           );
-                        })),
+                        }
+                      },
+                    ),
                   ),
-                  // the expanded widgets ends here
                 ],
               ),
             ),
@@ -141,5 +153,34 @@ class _HomepageState extends State<Homepage> {
         ],
       ),
     );
+  }
+
+  Future<List<Recipe>> fetchRecipes() async {
+    var url = Uri.parse('https://tasty.p.rapidapi.com/recipes/list');
+    var headers = {
+      'X-RapidAPI-Key': '682d0337cemshd966d21fce23698p19ef72jsn6d730c813e9f',
+      'X-RapidAPI-Host': 'tasty.p.rapidapi.com',
+    };
+    var params = {
+      'from': '0',
+      'size': '5', // Fetch 5 recipes
+      'q': 'pasta ',
+    };
+
+    var response =
+        await http.get(url.replace(queryParameters: params), headers: headers);
+
+    if (response.statusCode == 200) {
+      var json = jsonDecode(response.body);
+      return List.generate(json['results'].length, (index) {
+        return Recipe(
+          displayName: json["results"][index]["name"],
+          imageUrl: json["results"][index]["thumbnail_url"],
+          description: json["results"][index]["description"],
+        );
+      });
+    } else {
+      throw Exception('Failed to load recipes');
+    }
   }
 }

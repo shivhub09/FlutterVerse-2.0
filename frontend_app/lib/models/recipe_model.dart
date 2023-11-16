@@ -1,18 +1,20 @@
-class RecipeModel
-{
-  final String applabel;
-  final String appimgUrl;
-  final double appcalories;
-  final String appurl;
+class Recipe {
+  final String displayName;
+  final String imageUrl;
+  final String description; // Adding description field
 
-  RecipeModel({required this.applabel,required this.appcalories ,required this.appimgUrl,required this.appurl});
-  factory RecipeModel.fromMap(Map recipe)
-  {
-    return RecipeModel(
-      applabel: recipe["label"],
-      appcalories: recipe["calories"],
-      appimgUrl: recipe["image"],
-      appurl: recipe["url"]
+  Recipe({
+    required this.displayName,
+    required this.imageUrl,
+    required this.description,
+  });
+
+  factory Recipe.fromJson(Map<String, dynamic> json) {
+    return Recipe(
+      displayName: json['name'] ?? '',
+      imageUrl: json['thumbnail_url'] ?? '',
+      description: json['description'] ?? '', // Assigning description value
+      // totalTime: json['cook_time_minutes'],
     );
   }
 }
