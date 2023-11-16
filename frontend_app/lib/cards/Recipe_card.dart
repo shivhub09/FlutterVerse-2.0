@@ -7,6 +7,7 @@ class RecipeCard extends StatelessWidget {
   const RecipeCard({
     required this.imageUrl,
     required this.title,
+    
   });
 
   @override

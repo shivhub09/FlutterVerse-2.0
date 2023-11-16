@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontend_app/cards/Recipe_card.dart';
 import 'package:frontend_app/models/recipe_model.dart';
+import 'package:frontend_app/screens/recipe_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
@@ -59,14 +60,13 @@ class _HomepageState extends State<Homepage> {
             ),
           ),
 
-          // searchbox widget created 
+          // searchbox widget created
           SearchBox(
             controller: _controller,
           ),
-          // ends here 
+          // ends here
 
-
-          // this is for the listview of the recipe cards 
+          // this is for the listview of the recipe cards
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(top: 20),
@@ -114,9 +114,24 @@ class _HomepageState extends State<Homepage> {
                             padding: const EdgeInsets.all(0),
                             itemCount: snapshot.data!.length,
                             itemBuilder: ((context, index) {
-                              return RecipeCard(
-                                imageUrl: snapshot.data![index].imageUrl,
-                                title: snapshot.data![index].displayName,
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => RecipeScreen(
+                                                imageUrl: snapshot
+                                                    .data![index].imageUrl,
+                                                title: snapshot
+                                                    .data![index].displayName,
+                                                instructions: snapshot
+                                                    .data![index].instructions,
+                                              )));
+                                },
+                                child: RecipeCard(
+                                  imageUrl: snapshot.data![index].imageUrl,
+                                  title: snapshot.data![index].displayName,
+                                ),
                               );
                             }),
                           );
@@ -128,16 +143,14 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
           ),
-        // this is the end where the list view of the card ends
+          // this is the end where the list view of the card ends
         ],
       ),
     );
   }
 
-
-  // function starts here 
+  // function starts here
   Future<List<Recipe>> fetchRecipes() async {
-
     var url = Uri.parse('https://tasty.p.rapidapi.com/recipes/list');
 
     var headers = {
@@ -156,12 +169,13 @@ class _HomepageState extends State<Homepage> {
 
     if (response.statusCode == 200) {
       var json = jsonDecode(response.body);
+      print(json['results'][0]["instructions"]);
       return List.generate(json['results'].length, (index) {
         return Recipe(
-          displayName: json["results"][index]["name"],
-          imageUrl: json["results"][index]["thumbnail_url"],
-          description: json["results"][index]["description"],
-        );
+            displayName: json["results"][index]["name"],
+            imageUrl: json["results"][index]["thumbnail_url"],
+            description: json["results"][index]["description"],
+            instructions: json["results"][index]["instructions"]);
       });
     } else {
       throw Exception('Failed to load recipes');
@@ -171,7 +185,7 @@ class _HomepageState extends State<Homepage> {
   // function ends here
 }
 
-// the searchbox widget created 
+// the searchbox widget created
 class SearchBox extends StatefulWidget {
   final TextEditingController controller;
   const SearchBox({required this.controller});
