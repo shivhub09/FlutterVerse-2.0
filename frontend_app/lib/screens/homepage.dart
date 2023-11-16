@@ -58,37 +58,15 @@ class _HomepageState extends State<Homepage> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.red),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: TextFormField(
-                  cursorColor: Colors.black,
-                  controller: _controller,
-                  style: GoogleFonts.montserrat(color: Colors.black),
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    hintStyle: GoogleFonts.montserrat(
-                      color: Colors.black,
-                      fontSize: 18,
-                    ),
-                    border: InputBorder.none,
-                    suffixIcon: const Icon(
-                      Icons.search,
-                      color: Colors.black,
-                      size: 25,
-                    ),
-                  ),
-                ),
-              ),
-            ),
+
+          // searchbox widget created 
+          SearchBox(
+            controller: _controller,
           ),
+          // ends here 
+
+
+          // this is for the listview of the recipe cards 
           Expanded(
             child: Container(
               margin: const EdgeInsets.only(top: 20),
@@ -150,17 +128,23 @@ class _HomepageState extends State<Homepage> {
               ),
             ),
           ),
+        // this is the end where the list view of the card ends
         ],
       ),
     );
   }
 
+
+  // function starts here 
   Future<List<Recipe>> fetchRecipes() async {
+
     var url = Uri.parse('https://tasty.p.rapidapi.com/recipes/list');
+
     var headers = {
       'X-RapidAPI-Key': '682d0337cemshd966d21fce23698p19ef72jsn6d730c813e9f',
       'X-RapidAPI-Host': 'tasty.p.rapidapi.com',
     };
+
     var params = {
       'from': '0',
       'size': '5', // Fetch 5 recipes
@@ -182,5 +166,53 @@ class _HomepageState extends State<Homepage> {
     } else {
       throw Exception('Failed to load recipes');
     }
+  }
+
+  // function ends here
+}
+
+// the searchbox widget created 
+class SearchBox extends StatefulWidget {
+  final TextEditingController controller;
+  const SearchBox({required this.controller});
+
+  @override
+  State<SearchBox> createState() => _SearchBoxState();
+}
+
+class _SearchBoxState extends State<SearchBox> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: Colors.red),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: TextFormField(
+            cursorColor: Colors.black,
+            controller: widget.controller,
+            style: GoogleFonts.montserrat(color: Colors.black),
+            decoration: InputDecoration(
+              hintText: 'Search...',
+              hintStyle: GoogleFonts.montserrat(
+                color: Colors.black,
+                fontSize: 18,
+              ),
+              border: InputBorder.none,
+              suffixIcon: const Icon(
+                Icons.search,
+                color: Colors.black,
+                size: 25,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
